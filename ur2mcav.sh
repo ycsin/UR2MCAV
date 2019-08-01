@@ -151,17 +151,16 @@ fi
 # . rosip
 #
 if [ $INSTALL_SETIP -eq 1 ]; then
-  FILE=/bin/rosip
-  sudo touch $FILE
-  sudo chmod 777 $FILE
-  sudo chown 0.0 $FILE
-  # ROS_MASTER_URI is the IP address of computer running roscore
-  # ROS_HOSTNAME & ROS_IP is the IP address of pi
-  sudo echo 'MASTER_IP=192.168.0.12'  >> $FILE
-  sudo echo 'SELF_IP=192.168.0.11' >> $FILE
-  sudo echo 'export ROS_MASTER_URI=http://${MASTER_IP}:11311' >> $FILE
-  sudo echo 'export ROS_HOSTNAME=${SELF_IP}' >> $FILE
-  sudo echo 'export ROS_IP=${SELF_IP}' >> $FILE
+  FILE=/bin/setip
+  if ping -q -c 1 -W 1 8.8.8.8 &>/dev/null; then
+	  sudo wget --no-check-certificate -O /bin/setip https://raw.githubusercontent.com/ycsin3/ROS_setip/master/setip
+    sudo chmod 777 $FILE
+    sudo chown 0.0 $FILE
+	else
+    echo ""
+	  echo "[ERROR] setip can not be installed without internet connection."
+    echo ""
+	fi
 fi
 
 #
