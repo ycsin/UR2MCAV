@@ -1,7 +1,6 @@
 #!/bin/sh
 # Autoconfig script to transform ubiquityrobotics pi image to MonashCAV pi image
-# AUTHOR:		Yong Cong Sin - ycsin3@student.monash.edu | yongcong.sin@gmail.com
-# LAST UPDATE:	120718072019
+# AUTHOR:		Yong Cong Sin - yongcong.sin@gmail.com
 
 HOME=/home/ubuntu
 CATKIN=/home/ubuntu/catkin_ws
@@ -16,7 +15,7 @@ INSTALL_ROSKILL=1				# Install a script to kill roscore. 															Default:
 INSTALL_SETIP=1					# Install a script to set ip. 																	Default: 1
 CLEANUP_UBIQUITYROBOTICS=1		# Clean-up ubiquity robotics folders and files. 												Default: 1
 SET_ENVIRONMENT=1				# Set up ROS environment. 																		Default: 1
-INSTALL_KACO=1					# Install KACanOpen. 																			Default: 1
+INSTALL_MCAV=1					# Install MonashCAV steering node. 																			Default: 1
 INSTALL_VSCODE=0				# Install Visual Studio Code. **Very very slow, not recommended 								Default: 0
 INSTALL_GEDIT=1					# Install Gedit. 																				Default: 1
 INSTALL_REALVNC=0				# Install RealVNC server. 																		Default: 0
@@ -201,25 +200,22 @@ fi
 #
 if [ $SET_ENVIRONMENT -eq 1 ]; then
   FILE=/etc/bash.bashrc
-# Sourcing our own IPs config
-  sudo echo 'source /bin/rosip' >> ~/.bashrc
 # Configuring environment for ssh client
   sudo echo 'source /opt/ros/kinetic/setup.bash' >> $FILE
   sudo echo 'source /home/ubuntu/catkin_ws/devel/setup.bash' >> $FILE
-  sudo echo 'source /bin/rosip' >> $FILE
   sudo echo 'export ROS_PARALLEL_JOBS=-j2 # Limit the number of compile threads due to memory' >> $FILE
 fi
 
-# (K)(A)(C)an(O)pen
-if [ $INSTALL_KACO -eq 1 ]; then
+# MonashCAV
+if [ $INSTALL_MCAV -eq 1 ]; then
   cd $CATKIN
   if [ ! -d src ]; then
     sudo mkdir src
   fi
   cd src
-  git clone https://github.com/KITmedical/kacanopen.git
+  git clone https://github.com/ycsin/monashcav.git
   cd ..
-  catkin_make -DDRIVER=socket -DBUSNAME=can0 -DBAUDRATE=1M
+  catkin_make
 fi
 
 # Gedit
